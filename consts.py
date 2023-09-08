@@ -1,6 +1,7 @@
 from pygame import image, transform
 import glob
 
+
 #Funcs
 def get_image(pathname: str):
     return image.load(pathname)
@@ -14,8 +15,7 @@ def get_images(pathname: str):
     return arr
 
 def Reverse(tuples: tuple):
-    new_tup = tuples[::-1]
-    return new_tup
+    return tuples[::-1]
 
 
 #Consts
@@ -24,6 +24,7 @@ NUMBER_OF_ROWS = 8
 SIZE_OF_ONE_RECT = int(SCREEN_WIDTH / NUMBER_OF_ROWS)
 
 BLACK_SQUARE_COLOR = (55, 55, 55)
+HIGHLIGHT_SQUARE_COLOR = (150, 150, 150)
 WHITE_SQUARE_COLOR = (200, 200, 200)
 
 ICON = get_image("images/icon/xdd.png")
@@ -31,25 +32,37 @@ ICON = get_image("images/icon/xdd.png")
 PIECES_IMAGES = get_images("images/pieces/*.png")
 
 DICT_OF_PIECES_KEYS = {
-    "wpawn": 0,
-    "wrook": 1,
-    "wknight": 2,
-    "wbishop": 3,
-    "wking": 4,
-    "wqueen": 5,
-    "bpawn": 6,
-    "brook": 7,
-    "bknight": 8,
-    "bbishop": 9,
-    "bking": 10,
-    "bqueen": 11
+    "whitepawn": 0,
+    "whiterook": 1,
+    "whiteknight": 2,
+    "whitebishop": 3,
+    "whiteking": 4,
+    "whitequeen": 5,
+    "blackpawn": 6,
+    "blackrook": 7,
+    "blackknight": 8,
+    "blackbishop": 9,
+    "blackking": 10,
+    "blackqueen": 11,
+    "whitepawn highlight": 0,
+    "whiterook highlight": 1,
+    "whiteknight highlight": 2,
+    "whitebishop highlight": 3,
+    "whiteking highlight": 4,
+    "whitequeen highlight": 5,
+    "blackpawn highlight": 6,
+    "blackrook highlight": 7,
+    "blackknight highlight": 8,
+    "blackbishop highlight": 9,
+    "blackking highlight": 10,
+    "blackqueen highlight": 11
 }
 
-FIELD = (("brook", "bknight", "bbishop", "bking", "bqueen", "bbishop", "bknight", "brook"), 
-        ("bpawn", "bpawn", "bpawn", "bpawn", "bpawn", "bpawn", "bpawn", "bpawn"),
-        ("none", "none", "none", "none", "none", "none", "none", "none"),
-        ("none", "none", "none", "none", "none", "none", "none", "none"),
-        ("none", "none", "none", "none", "none", "none", "none", "none"),
-        ("none", "none", "none", "none", "none", "none", "none", "none"),
-        ("wpawn", "wpawn", "wpawn", "wpawn", "wpawn", "wpawn", "wpawn", "wpawn"),
-        ("wrook", "wknight", "wbishop", "wqueen", "wking",  "wbishop", "wknight", "wrook"))
+field = [["blackrook", "blackknight", "blackbishop", "blackking", "blackqueen", "blackbishop", "blackknight", "blackrook"], 
+        ["blackpawn", "blackpawn", "blackpawn", "blackpawn", "blackpawn", "blackpawn", "blackpawn", "blackpawn"],
+        ["none", "none", "none", "none", "none", "none", "none", "none"],
+        ["none", "none", "none", "none", "none", "none", "none", "none"],
+        ["none", "none", "none", "none", "none", "none", "none", "none"],
+        ["none", "none", "none", "none", "none", "none", "none", "none"],
+        ["whitepawn", "whitepawn", "whitepawn", "whitepawn", "whitepawn", "whitepawn", "whitepawn", "whitepawn"],
+        ["whiterook", "whiteknight", "whitebishop", "whitequeen", "whiteking",  "whitebishop", "whiteknight", "whiterook"]]
