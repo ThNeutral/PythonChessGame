@@ -12,18 +12,23 @@ class Board:
         self.moves = self.generateMoves()
 
     def precomputedMoveData(self):
-        numSquaresToEdges = [None] * 64
+        numSquaresToEdges = [[]] * 64
         for file in range(8):
             for rank in range(8):
+             north = 7-rank
+             south = rank
+             west = file
+             east = 7 - file
+
              numSquaresToEdges[rank * 8 + file] = [
-                7 - rank,
-                rank,
-                file,
-                7 - file,
-                min(7 - rank, file),
-                min(rank, 7 - file),
-                min(7 - rank, 7 - file),
-                min(rank, file)
+                north,
+                south,
+                west,
+                east,
+                min(north, west),
+                min(south, east),
+                min(north, east),
+                min(south, west)
              ]
         return numSquaresToEdges
     
@@ -64,12 +69,16 @@ class Board:
                 if is_set(piece, 5) == self.numColorToMove:
                     if piece in SLIDING_PIECES:
                         moves = self.generateSlidingPieceMove(startSquare, piece, moves)
+                    elif piece in PAWN:
+                        moves = self.generatePawnMove(startSquare, piece, moves)
+                    elif piece in KNIGHT:
+                        moves = self.generateKnightMoves(startSquare, piece, moves)
         return moves
 
     def generateSlidingPieceMove(self, startSquare: int, piece: int, moves): 
         startDirectionIndex = 4 if piece in BISHOP else 0
         endDirectionIndex = 4 if piece in ROOK else 8
-
+        
         for directionIndex in range(startDirectionIndex, endDirectionIndex):
             for n in range(self.numSquaresToEdges[startSquare][directionIndex]):
                 
@@ -83,7 +92,79 @@ class Board:
 
                 if not_is_set_two(piece, pieceOnTargetSquare, 4):
                     break
+
+                if piece in KING:
+                    break
         return moves
+    
+    def generatePawnMove(self, startSquare: int, piece: int, moves): 
+        if is_set(piece, 4):
+            startPositions = [8, 9, 10, 11, 12, 13, 14, 15]
+            if startSquare in startPositions: 
+                directions = [9, 8, 7, 16]
+            else:
+                directions = [9, 8, 7]
+        else:
+            startPositions = [48, 49, 50, 51, 52, 53, 54, 55]
+            if startSquare in startPositions: 
+                directions = [-9, -8, -7, -16]
+            else:
+                directions = [-9, -8, -7]
+        
+        for directionIndex in directions:
+            targetSquare = startSquare + directionIndex
+            pieceOnTargetSquare = self.square[targetSquare]
+
+            if is_set_two(piece, pieceOnTargetSquare, 4):
+                continue
+            elif not_is_set_two(piece, pieceOnTargetSquare, 4):
+                if directionIndex in [-9, -7, 7, 9]:
+                    moves.append((startSquare, targetSquare))  
+                continue  
+            else:
+                if directionIndex in [8, 16, -8, -16]:
+                    moves.append((startSquare, targetSquare))
+            
+        return moves
+    
+    def generateKnightMoves(self, startSquare: int, piece: int, moves):
+        directions = [8+8+1, 8+8-1, -8-8+1, -8-8-1, -1-1+8, -1-1-8, 1+1+8, 1+1-8]
+
+
+        for index, directionIndex in enumerate(directions):
+            targetSquare = startSquare + directionIndex
+            if targetSquare < 0 or targetSquare > 63:
+                continue
+            pieceOnTargetSquare = self.square[targetSquare]
+
+            print(startSquare)
+            if is_set_two(piece, pieceOnTargetSquare, 4):
+                continue 
+            elif self.checkDistanceToBorder(self.numSquaresToEdges[startSquare], directionIndex):
+                continue
+            else:
+                moves.append((startSquare, targetSquare))
+            
+        return moves   
+    
+    def checkDistanceToBorder(self, numSquaresToEdges, directionIndex):
+        if directionIndex == (8+8+1):
+            return (numSquaresToEdges[0] in [0, 1]) or (numSquaresToEdges[3] == 0)
+        elif directionIndex == (8+8-1):
+            return (numSquaresToEdges[0] in [0, 1]) or (numSquaresToEdges[2] == 0)
+        elif directionIndex == (-8-8-1):
+            return (numSquaresToEdges[1] in [0, 1]) or (numSquaresToEdges[2] == 0)
+        elif directionIndex == (-8-8+1):
+            return (numSquaresToEdges[1] in [0, 1]) or (numSquaresToEdges[3] == 0)
+        elif directionIndex == (-1-1-8):
+            return (numSquaresToEdges[2] in [0, 1]) or (numSquaresToEdges[1] == 0)
+        elif directionIndex == (-1-1+8):
+            return (numSquaresToEdges[2] in [0, 1]) or (numSquaresToEdges[0] == 0)
+        elif directionIndex == (1+1+8):
+            return (numSquaresToEdges[3] in [0, 1]) or (numSquaresToEdges[1] == 0)
+        elif directionIndex == (1+1-8):
+            return (numSquaresToEdges[3] in [0, 1]) or (numSquaresToEdges[0] == 0)
+
 
 #Funcs
 #----------------------------------------------------------------------------------------------------
@@ -154,11 +235,14 @@ DICT_OF_PIECES = {
     "black": 16 
 }
 
-SLIDING_PIECES = [12, 13, 14, 20, 21, 22]
+SLIDING_PIECES = [12, 13, 14, 20, 21, 22, 9, 17]
 
+KING = [9, 17]
+PAWN = [10, 18]
+KNIGHT = [11, 19]
 BISHOP = [12, 20]
 ROOK = [13, 21]
 
-fen = "rnbqkbnr/8/8/8/8/8/8/RNBQKBNR w KQkq - 0 1"
+fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 board = Board(fen)
