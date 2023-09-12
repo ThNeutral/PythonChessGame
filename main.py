@@ -1,3 +1,7 @@
+#TODO: add en passant
+#TODO: add castling
+#TODO: add check and checkmate
+
 import pygame
 from tkinter import Tk, messagebox
 from consts import *
