@@ -7,9 +7,10 @@ class Board:
     def __init__(self, fen: str):
         self.square = self.loadFromFEN(fen)
         self.colourToMove = fen.split(" ")[1]
-        self.numColorToMove = 0 if fen.split(" ")[1] == "w" else 1
+        self.numColorToMove = 0
         self.numSquaresToEdges = self.precomputedMoveData()
         self.moves = self.generateMoves()
+        self.win = None
 
     def precomputedMoveData(self):
         numSquaresToEdges = [[]] * 64
@@ -63,25 +64,32 @@ class Board:
     
     def generateMoves(self): 
         moves = []
+        if not KING[0] in self.square:
+            self.win = "black"
+        elif not KING[1] in self.square:
+            self.win = "white"
         for startSquare in range(len(self.square)):
             piece = self.square[startSquare]
             if piece != None:
-                if is_set(piece, 5) == self.numColorToMove:
+                if (is_set(piece, 4) / 16) == self.numColorToMove:
                     if piece in SLIDING_PIECES:
                         moves = self.generateSlidingPieceMove(startSquare, piece, moves)
                     elif piece in PAWN:
                         moves = self.generatePawnMove(startSquare, piece, moves)
                     elif piece in KNIGHT:
                         moves = self.generateKnightMoves(startSquare, piece, moves)
+        if self.numColorToMove == 1:
+            self.numColorToMove = 0
+        else:
+            self.numColorToMove = 1
         return moves
 
-    def generateSlidingPieceMove(self, startSquare: int, piece: int, moves): 
+    def generateSlidingPieceMove(self, startSquare: int, piece: int, moves):         
         startDirectionIndex = 4 if piece in BISHOP else 0
         endDirectionIndex = 4 if piece in ROOK else 8
         
         for directionIndex in range(startDirectionIndex, endDirectionIndex):
             for n in range(self.numSquaresToEdges[startSquare][directionIndex]):
-                
                 targetSquare = startSquare + DIRECTIONAL_OFFSETS[directionIndex] * (n + 1)
                 pieceOnTargetSquare = self.square[targetSquare]
 
@@ -131,13 +139,12 @@ class Board:
         directions = [8+8+1, 8+8-1, -8-8+1, -8-8-1, -1-1+8, -1-1-8, 1+1+8, 1+1-8]
 
 
-        for index, directionIndex in enumerate(directions):
+        for directionIndex in directions:
             targetSquare = startSquare + directionIndex
             if targetSquare < 0 or targetSquare > 63:
                 continue
             pieceOnTargetSquare = self.square[targetSquare]
 
-            print(startSquare)
             if is_set_two(piece, pieceOnTargetSquare, 4):
                 continue 
             elif self.checkDistanceToBorder(self.numSquaresToEdges[startSquare], directionIndex):
@@ -243,6 +250,4 @@ KNIGHT = [11, 19]
 BISHOP = [12, 20]
 ROOK = [13, 21]
 
-fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-
-board = Board(fen)
+default_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
