@@ -9,8 +9,11 @@ class Board:
         self.colourToMove = fen.split(" ")[1]
         self.numColorToMove = 0
         self.numSquaresToEdges = self.precomputedMoveData()
-        self.moves = self.generateMoves()
         self.win = None
+        self.doubleMoves = []
+        self.doubleMove = None
+        self.moves = self.generateMoves()
+        self.toRemove = None
 
     def precomputedMoveData(self):
         numSquaresToEdges = [[]] * 64
@@ -63,6 +66,7 @@ class Board:
         return board
     
     def generateMoves(self): 
+        self.doubleMoves = []
         moves = []
         if not KING[0] in self.square:
             self.win = "black"
@@ -130,7 +134,18 @@ class Board:
                     moves.append((startSquare, targetSquare))  
                 continue  
             else:
-                if directionIndex in [8, 16, -8, -16]:
+                if directionIndex in [-8, 8]:
+                    moves.append((startSquare, targetSquare))
+                    if self.doubleMove != None:
+                        if (self.doubleMove[0] == startSquare - 8 - 8 - 1) or (self.doubleMove[0] == startSquare - 8 - 8 + 1):
+                            moves.append((startSquare, targetSquare + 1))
+                            self.toRemove = startSquare + 1
+                        if (self.doubleMove[0] == startSquare + 8 + 8 - 1) or (self.doubleMove[0] == startSquare + 8 + 8 + 1):
+                            moves.append((startSquare, targetSquare - 1))
+                            self.toRemove = startSquare - 1 
+                            
+                elif directionIndex in [-16, 16]:
+                    self.doubleMoves.append((startSquare, targetSquare))
                     moves.append((startSquare, targetSquare))
             
         return moves

@@ -1,4 +1,3 @@
-#TODO: add en passant
 #TODO: add castling
 #TODO: add check and checkmate
 
@@ -28,9 +27,18 @@ while running:
                 ended = True
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if isHighlighted:
-                    if (highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT, event.pos[1] // SIZE_OF_ONE_RECT * 8 + event.pos[0] // SIZE_OF_ONE_RECT) in board.moves:
+                    turn = (highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT, event.pos[1] // SIZE_OF_ONE_RECT * 8 + event.pos[0] // SIZE_OF_ONE_RECT)
+                    if turn in board.moves:
                         board.square[event.pos[1] // SIZE_OF_ONE_RECT * 8 + event.pos[0] // SIZE_OF_ONE_RECT] = board.square[highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT]
                         board.square[highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT] = None
+                        if turn in board.doubleMoves:
+                            board.doubleMove = turn
+                        else:
+                            board.doubleMove = None
+                        if board.toRemove != None:
+                            board.square[board.toRemove] = None
+                            board.toRemove = None
+                        
                         board.moves = board.generateMoves()
                     isHighlighted = False
                     highlighted = (-1, -1)
