@@ -4,7 +4,7 @@
 
 import pygame
 from tkinter import Tk, messagebox
-from consts import *
+from auxillary import *
 
 pygame.init()
 Tk().wm_withdraw()
