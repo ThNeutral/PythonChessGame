@@ -14,9 +14,13 @@ def capture(board, event, highlighted):
     return board.square
 
 def castling(board, event, highlighted):
-    temp = board.square[highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT]
-    board.square[highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT] = board.square[event.pos[1] // SIZE_OF_ONE_RECT * 8 + event.pos[0] // SIZE_OF_ONE_RECT]
-    board.square[event.pos[1] // SIZE_OF_ONE_RECT * 8 + event.pos[0] // SIZE_OF_ONE_RECT] = temp
+    if (event.pos[1] // SIZE_OF_ONE_RECT * 8 + event.pos[0] // SIZE_OF_ONE_RECT) in [7, 63]:
+        board.square[highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT + 1] = board.square[event.pos[1] // SIZE_OF_ONE_RECT * 8 + event.pos[0] // SIZE_OF_ONE_RECT]
+    else:
+         board.square[highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT - 1] = board.square[event.pos[1] // SIZE_OF_ONE_RECT * 8 + event.pos[0] // SIZE_OF_ONE_RECT]
+    board.square[event.pos[1] // SIZE_OF_ONE_RECT * 8 + event.pos[0] // SIZE_OF_ONE_RECT] = board.square[highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT]
+    board.square[highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT] = None
+    
     return board.square   
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_WIDTH))
@@ -42,6 +46,7 @@ while running:
                     if turn in board.moves:
                         if board.square[turn[0]] == KING[0]:
                             if board.castling[0]:
+                                print("aaaa")
                                 board.square = castling(board, event, highlighted)
                             else:
                                 board.square = capture(board, event, highlighted)

@@ -108,28 +108,26 @@ class Board:
                 if not_is_set_two(piece, pieceOnTargetSquare, 4):
                     break
 
-                leftCastlingPattern = [[13, None, None, None, 9], [21, None, None, None, 17]]
-                rightCastlingPattern = [[17, None, None, 21], [9, None, None, 13]]
-
                 if piece in KING:
+                    leftCastlingPattern = [[13, None, None, None, 9], [21, None, None, None, 17]]
+                    rightCastlingPattern = [[17, None, None, 21], [9, None, None, 13]]
                     if self.castling[0]:
                         row = self.square[56:64]
                         if row[:5] in leftCastlingPattern:
-                            moves.append((row[:5][4], row[:5][0]))
-                            self.castlingMoves.append((row[:5][4], row[:5][0]))
+                            moves.append((60, 56))
+                            self.castlingMoves.append((60, 56))
                         if row[4:] in rightCastlingPattern:
-                            print("dadsa")
-                            moves.append((row[4:][0], row[4:][3]))
-                            self.castlingMoves.append((row[4:][0], row[4:][3]))
+                            moves.append((60, 63))
+                            self.castlingMoves.append((60, 63))
 
                     if self.castling[1]:
                         row = self.square[:8]
                         if row[:5] in leftCastlingPattern:
-                            moves.append((row[:5][4], row[:5][0]))
-                            self.castlingMoves.append((row[:5][4], row[:5][0]))
+                            moves.append((4, 0))
+                            self.castlingMoves.append((4, 0))
                         if row[4:] in rightCastlingPattern:
-                            moves.append((row[4:][0], row[4:][3]))
-                            self.castlingMoves.append((row[4:][0], row[4:][3]))
+                            moves.append((4, 7))
+                            self.castlingMoves.append((4, 7))
 
                     break
         return moves
@@ -289,8 +287,5 @@ PAWN = [10, 18]
 KNIGHT = [11, 19]
 BISHOP = [12, 20]
 ROOK = [13, 21]
-
-leftCastlingPattern = [[13, None, None, None, 9], [21, None, None, None, 17]]
-rightCastlingPattern = [[17, None, None, 21], [9, None, None, 13]]
 
 default_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
