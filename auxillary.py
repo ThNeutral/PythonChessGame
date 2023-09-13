@@ -12,6 +12,7 @@ class Board:
         self.win = None
         self.doubleMoves = []
         self.doubleMove = None
+        self.castling = [True, True]
         self.moves = self.generateMoves()
         self.toRemove = None
 
@@ -106,6 +107,22 @@ class Board:
                     break
 
                 if piece in KING:
+                    if self.castling[0]:
+                        row = self.square[56:64]
+                        if row[:5] in leftCastlingPattern:
+                            print("left castling opportunity white")
+                        if row[4:] in rightCastlingPattern:
+                            print("right castling opportunity white")
+                        print("white", row)
+
+                    if self.castling[1]:
+                        row = self.square[:8]
+                        if row[:5] in leftCastlingPattern:
+                            print("left castling opportunity black")
+                        if row[4:] in rightCastlingPattern:
+                            print("right castling opportunity black")
+                        print("white", row)
+                        
                     break
         return moves
     
@@ -264,5 +281,8 @@ PAWN = [10, 18]
 KNIGHT = [11, 19]
 BISHOP = [12, 20]
 ROOK = [13, 21]
+
+leftCastlingPattern = [[9, None, None, None, 13], [17, None, None, None, 21]]
+rightCastlingPattern = [[21, None, None, 17], [13, None, None, 9]]
 
 default_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"

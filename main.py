@@ -8,6 +8,11 @@ from auxillary import *
 pygame.init()
 Tk().wm_withdraw()
 
+def capture(board, event, highlighted):
+    board.square[event.pos[1] // SIZE_OF_ONE_RECT * 8 + event.pos[0] // SIZE_OF_ONE_RECT] = board.square[highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT]
+    board.square[highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT] = None
+    return board.square
+
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_WIDTH))
 pygame.display.set_caption("Omegalulchess")
 pygame.display.set_icon(ICON)
@@ -29,8 +34,13 @@ while running:
                 if isHighlighted:
                     turn = (highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT, event.pos[1] // SIZE_OF_ONE_RECT * 8 + event.pos[0] // SIZE_OF_ONE_RECT)
                     if turn in board.moves:
-                        board.square[event.pos[1] // SIZE_OF_ONE_RECT * 8 + event.pos[0] // SIZE_OF_ONE_RECT] = board.square[highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT]
-                        board.square[highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT] = None
+                        if board.square[turn[0]] == KING[0]:
+                            board.castling[0] = False
+                            print("white")
+                        elif board.square[turn[0]] == KING[1]:
+                            board.castling[1] = False
+                            print("black")
+                        board.square = capture(board, event, highlighted)
                         if turn in board.doubleMoves:
                             board.doubleMove = turn
                         else:
