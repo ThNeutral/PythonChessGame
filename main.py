@@ -13,6 +13,12 @@ def capture(board, event, highlighted):
     board.square[highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT] = None
     return board.square
 
+def castling(board, event, highlighted):
+    temp = board.square[highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT]
+    board.square[highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT] = board.square[event.pos[1] // SIZE_OF_ONE_RECT * 8 + event.pos[0] // SIZE_OF_ONE_RECT]
+    board.square[event.pos[1] // SIZE_OF_ONE_RECT * 8 + event.pos[0] // SIZE_OF_ONE_RECT] = temp
+    return board.square   
+
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_WIDTH))
 pygame.display.set_caption("Omegalulchess")
 pygame.display.set_icon(ICON)
@@ -35,12 +41,19 @@ while running:
                     turn = (highlighted[1] // SIZE_OF_ONE_RECT * 8 + highlighted[0] // SIZE_OF_ONE_RECT, event.pos[1] // SIZE_OF_ONE_RECT * 8 + event.pos[0] // SIZE_OF_ONE_RECT)
                     if turn in board.moves:
                         if board.square[turn[0]] == KING[0]:
+                            if board.castling[0]:
+                                board.square = castling(board, event, highlighted)
+                            else:
+                                board.square = capture(board, event, highlighted)
                             board.castling[0] = False
-                            print("white")
                         elif board.square[turn[0]] == KING[1]:
+                            if board.castling[1]:
+                                board.square = castling(board, event, highlighted)
+                            else:
+                                board.square = capture(board, event, highlighted)
                             board.castling[1] = False
-                            print("black")
-                        board.square = capture(board, event, highlighted)
+                        else:
+                            board.square = capture(board, event, highlighted)
                         if turn in board.doubleMoves:
                             board.doubleMove = turn
                         else:

@@ -13,6 +13,7 @@ class Board:
         self.doubleMoves = []
         self.doubleMove = None
         self.castling = [True, True]
+        self.castlingMoves = []
         self.moves = self.generateMoves()
         self.toRemove = None
 
@@ -68,6 +69,7 @@ class Board:
     
     def generateMoves(self): 
         self.doubleMoves = []
+        self.castlingMoves = []
         moves = []
         if not KING[0] in self.square:
             self.win = "black"
@@ -106,23 +108,29 @@ class Board:
                 if not_is_set_two(piece, pieceOnTargetSquare, 4):
                     break
 
+                leftCastlingPattern = [[13, None, None, None, 9], [21, None, None, None, 17]]
+                rightCastlingPattern = [[17, None, None, 21], [9, None, None, 13]]
+
                 if piece in KING:
                     if self.castling[0]:
                         row = self.square[56:64]
                         if row[:5] in leftCastlingPattern:
-                            print("left castling opportunity white")
+                            moves.append((row[:5][4], row[:5][0]))
+                            self.castlingMoves.append((row[:5][4], row[:5][0]))
                         if row[4:] in rightCastlingPattern:
-                            print("right castling opportunity white")
-                        print("white", row)
+                            print("dadsa")
+                            moves.append((row[4:][0], row[4:][3]))
+                            self.castlingMoves.append((row[4:][0], row[4:][3]))
 
                     if self.castling[1]:
                         row = self.square[:8]
                         if row[:5] in leftCastlingPattern:
-                            print("left castling opportunity black")
+                            moves.append((row[:5][4], row[:5][0]))
+                            self.castlingMoves.append((row[:5][4], row[:5][0]))
                         if row[4:] in rightCastlingPattern:
-                            print("right castling opportunity black")
-                        print("white", row)
-                        
+                            moves.append((row[4:][0], row[4:][3]))
+                            self.castlingMoves.append((row[4:][0], row[4:][3]))
+
                     break
         return moves
     
@@ -282,7 +290,7 @@ KNIGHT = [11, 19]
 BISHOP = [12, 20]
 ROOK = [13, 21]
 
-leftCastlingPattern = [[9, None, None, None, 13], [17, None, None, None, 21]]
-rightCastlingPattern = [[21, None, None, 17], [13, None, None, 9]]
+leftCastlingPattern = [[13, None, None, None, 9], [21, None, None, None, 17]]
+rightCastlingPattern = [[17, None, None, 21], [9, None, None, 13]]
 
 default_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
